@@ -5,11 +5,15 @@ using UnityEngine;
 public class Enemy1 : MonoBehaviour {
 
 	public float speed = 0.5f;
-	public Transform Player;
+	public Transform player;
+	public LayerMask playerMask;
 
 	private Vector2 startVelocity;
 	private bool firstVelocity = false;
 	private Rigidbody2D rb;
+
+	private Vector3 pointA = new Vector3 (-14.38f,5.1f,0f);
+	private Vector3 pointB = new Vector3 (14.38f,-5.1f,0f);
 
 	// Use this for initialization
 	void Start () {
@@ -19,12 +23,15 @@ public class Enemy1 : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+		//Debug.DrawLine(new Vector3(transform.position.x,transform.position.y,0f) + pointA, new Vector3(transform.position.x,transform.position.y,0f)+pointB);
+		if(Physics2D.OverlapArea(transform.position+pointA,transform.position+pointB,playerMask))
+			{
+				if (Vector2.Distance (player.position, transform.position) > 2.0f) {
 
-
-		if (Vector2.Distance (Player.position, transform.position) > 1.0f) {
-			
-			transform.position = Vector2.MoveTowards(transform.position,Player.position,speed*Time.deltaTime);
-		}
+					transform.position = Vector2.MoveTowards(transform.position,player.position,speed*Time.deltaTime);
+				}
+			}
+		
 
 		
 	}

@@ -4,18 +4,17 @@ using UnityEngine;
 
 public class BreakableObject : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
+	public GameObject[] brokenObjects;
+
+	void OnCollisionStay2D(Collision2D coll){
+		if (coll.rigidbody.mass > 49f) {
+			for (int i = 0; i < brokenObjects.Length; i++) {
+				brokenObjects[i].SetActive (true);
+			}
+
+			gameObject.SetActive (false);
+		}
 	}
 
-	void OnCollisionStay2D(Collision2D coll) {
-		if (coll.gameObject.tag == "RechargePoint")
-			
-	}
+
 }
