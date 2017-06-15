@@ -26,7 +26,7 @@ public class Enemy1 : MonoBehaviour {
 		//Debug.DrawLine(new Vector3(transform.position.x,transform.position.y,0f) + pointA, new Vector3(transform.position.x,transform.position.y,0f)+pointB);
 		if(Physics2D.OverlapArea(transform.position+pointA,transform.position+pointB,playerMask))
 			{
-				if (Vector2.Distance (player.position, transform.position) > 2.0f) {
+				if (Vector2.Distance (player.position, transform.position) > 0.5f) {
 
 					transform.position = Vector2.MoveTowards(transform.position,player.position,speed*Time.deltaTime);
 				}
