@@ -54,7 +54,7 @@ public class PlayerController : MonoBehaviour {
 	
 		if (grounded) {
 
-		//	Debug.Log (jumpHeight +" "+ count);
+			Debug.Log (jumpHeight +" "+ count+" "+grounded);
 			rb.velocity = new Vector2 (rb.velocity.x, jumpHeight );
 
 			if (jump == true) {
@@ -76,7 +76,7 @@ public class PlayerController : MonoBehaviour {
 
 	void OnCollisionEnter2D(Collision2D coll) {
 
-
+		grounded = false;
 		//rb.velocity = new Vector2 (rb.velocity.x, jumpHeight );
 
 
@@ -86,6 +86,12 @@ public class PlayerController : MonoBehaviour {
 
 		//} 
 
+	}
+
+	private void OnDrawGizmosSelected() {
+		Gizmos.color = Color.red;
+		//Use the same vars you use to draw your Overlap SPhere to draw your Wire Sphere.
+		Gizmos.DrawWireSphere(groundCheck.position,groundRaduis);
 	}
 
 

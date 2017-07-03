@@ -4,50 +4,53 @@ using UnityEngine;
 
 public class CameraFollower : MonoBehaviour {
 
+	/*public Transform player;
+	private Camera cam;
 
-	// Use this for initialization
-	void Start () {
-		
+	public float smooth;
+	public float velocity;
+
+	void Start(){
+
+		cam = GetComponent<Camera> ();
+
 	}
 
-	public Transform player;
-	public float smoothTime = 2F;
-	private float velocity = 0.0F;
-	public float extraXPosition = 5f;
-	public float extraYPosition = 1.09f;
-
-	public float leftBoundary;
-	public float rightBoundary;
-	public float upBoundary;
-	public float downBoundary;
-
-	private float PresentLeftBoundary;
-	private float PresentRightBoundary;
-	private float PresentUpBoundary;
-	private float PresentDownBoundary;
+	void Update(){
 
 
-	void FixedUpdate() {
+	}*/
 
-		float newPositionX = Mathf.SmoothDamp(transform.position.x, player.position.x + extraXPosition, ref velocity, smoothTime);
+	public GameObject objectToFollow;
 
-		PresentLeftBoundary = newPositionX - (transform.position.x / 2) + extraXPosition;
-		PresentRightBoundary = newPositionX + (transform.position.x / 2) + extraXPosition;
-		PresentUpBoundary = player.position.y + (transform.position.y / 2) + extraYPosition;
-		PresentDownBoundary = player.position.y - (transform.position.y / 2) + extraYPosition;
+	public float speed = 2.0f;
 
-		if (PresentLeftBoundary <= leftBoundary || PresentRightBoundary >= rightBoundary ) {
-			transform.position = new Vector3 (transform.position.x, player.position.y + extraYPosition, transform.position.z);
-		} 
+	public float minX;
+	public float maxX;
+	public float minY;
+	public float maxY;
 
-		if (PresentDownBoundary <= downBoundary || PresentUpBoundary >= upBoundary ) {
-			transform.position = new Vector3 (newPositionX, transform.position.y , transform.position.z);
+	void Update () {
+
+		float interpolation = speed * Time.deltaTime;
+
+		Vector3 position = this.transform.position;
+
+		position.y = Mathf.Lerp(this.transform.position.y, objectToFollow.transform.position.y, interpolation);
+		position.x = Mathf.Lerp(this.transform.position.x, objectToFollow.transform.position.x, interpolation);
+
+		if (position.x >= minX && position.x <= maxX) {
+			
+			this.transform.position = new Vector3 (position.x, this.transform.position.y, this.transform.position.z);
 		
 		}
 
-		if(PresentLeftBoundary >= leftBoundary && PresentRightBoundary <= rightBoundary && PresentDownBoundary >= downBoundary && PresentUpBoundary <= upBoundary){
-			transform.position = new Vector3(newPositionX, player.position.y + extraYPosition, transform.position.z);
-		}
+		if(position.y >= minY && position.y <= maxY) {
+			
+			this.transform.position = new Vector3 (this.transform.position.x, position.y, this.transform.position.z);
+		
+		}  
 
 	}
+
 }

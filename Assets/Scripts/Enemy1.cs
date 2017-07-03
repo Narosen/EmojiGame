@@ -8,17 +8,22 @@ public class Enemy1 : MonoBehaviour {
 	public Transform player;
 	public LayerMask playerMask;
 
-	private Vector2 startVelocity;
-	private bool firstVelocity = false;
+	public Transform checkpoint;
+
 	private Rigidbody2D rb;
+
+	private Vector2 startVelocity;
 
 	private Vector3 pointA = new Vector3 (-14.38f,5.1f,0f);
 	private Vector3 pointB = new Vector3 (14.38f,-5.1f,0f);
 
+	public float defaultBounceHeight = 3.0f;
+
 	// Use this for initialization
 	void Start () {
-		firstVelocity = false;
+
 		rb = GetComponent<Rigidbody2D> ();
+		startVelocity = new Vector2 (rb.velocity.x, defaultBounceHeight);
 	}
 	
 	// Update is called once per frame
@@ -37,12 +42,18 @@ public class Enemy1 : MonoBehaviour {
 	}
 
 	void OnCollisionEnter2D(Collision2D coll) {
-		if (firstVelocity == false) {
-			startVelocity = rb.velocity;
-			firstVelocity = true;
+
+		if (coll.gameObject.layer == 8) {
+		
+			rb.velocity = startVelocity;
+		}
+		
+
+
+		if (coll.gameObject.tag == "Player") {
+				coll.transform.position = checkpoint.position;
 		} 
 
-		rb.velocity = startVelocity;
-
 	}
+
 }

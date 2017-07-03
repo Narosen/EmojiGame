@@ -9,7 +9,8 @@ public class RollingStone : MonoBehaviour {
 	void OnTriggerEnter2D(Collider2D other) {
 		
 		if (other.tag == "Player") {
-			Stone.GetComponent<Rigidbody2D> ().AddForce (new Vector2(-250f, 20f),ForceMode2D.Impulse);
+			Stone.GetComponent<Rigidbody2D> ().AddForce (new Vector2(-500f, 20f),ForceMode2D.Impulse);
+			Destroy (gameObject);
 		}
 	}
 }
