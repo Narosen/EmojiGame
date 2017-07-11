@@ -9,14 +9,17 @@ public class PlayerController : MonoBehaviour {
 
 	public float jumpForce = 0.5f;
 	public LayerMask ground;
+	public LayerMask movPlatform;
 	public Transform groundCheck;
 	public float groundRaduis=0.5f;
 	public static bool grounded;
 	private bool jump = false;
 
-	private float defaultBounceHeight = 3.0f;
+	private float defaultBounceHeight = 4.0f;
 
 	private float jumpHeight;
+
+	public static bool movingPlatform = false;
 
 
 	// Use this for initialization
@@ -26,42 +29,43 @@ public class PlayerController : MonoBehaviour {
 		jumpHeight = defaultBounceHeight;
 
 	}
-	
+
+	float x;
 	void Update(){
 
-		//Debug.DrawRay(new Vector3(transform.position.x,transform.position.y,0.0f),new Vector3(groundRaduis,groundRaduis,0.0f));
+		//the input function should always be in Update function, otherwose it will be missed sometimes
+		x = Input.GetAxis ("Horizontal");
+
+		if (Input.GetButtonDown ("Jump")) {
+			jump = true;
+			jumpHeight = jumpForce;
+		}
 
 	}
 
-	int count = 0;
 	void FixedUpdate () {
-
-		float x = Input.GetAxis ("Horizontal");
 
 		//checking if the player is grounded 
 		grounded = Physics2D.OverlapCircle (groundCheck.position, groundRaduis, ground);
+		movingPlatform = Physics2D.OverlapCircle (groundCheck.position, groundRaduis, movPlatform);
+
 		//if not grounded but wants to jump, a force is added to the ball so that 
 		//it can reach the ground fast and the next bounce will be the jump. Like the video
-		if (Input.GetButtonDown ("Jump")) {
-			count++;
-			jump = true;
-			jumpHeight = jumpForce;
+		if (jump == true) {
 			if (grounded == false) {
-				rb.AddForce (new Vector2 (0.0f, -40f), ForceMode2D.Impulse);
+				rb.AddForce (new Vector2 (0.0f, -15f), ForceMode2D.Impulse);
 			}
-
 		}
 	
 		if (grounded) {
 
-			Debug.Log (jumpHeight +" "+ count+" "+grounded);
-			rb.velocity = new Vector2 (rb.velocity.x, jumpHeight );
-
-			if (jump == true) {
+			//the player should not bounce on moving platform
+			if (movingPlatform == false || jump == true) {
+				rb.velocity = new Vector2 (rb.velocity.x, jumpHeight );
 				jump = false;
 				jumpHeight = defaultBounceHeight;
-		
-			} 
+			}
+
 		}
 
 
@@ -72,19 +76,10 @@ public class PlayerController : MonoBehaviour {
 
 	}
 
-	//int count =0;
-
 	void OnCollisionEnter2D(Collision2D coll) {
 
 		grounded = false;
-		//rb.velocity = new Vector2 (rb.velocity.x, jumpHeight );
 
-
-		//if (jump == true) {
-		//	jump = false;
-		//	jumpHeight = defaultBounceHeight;
-
-		//} 
 
 	}
 

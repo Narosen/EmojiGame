@@ -10,41 +10,43 @@ public class GameManager : MonoBehaviour {
 
 	public enum GameState{
 		Playing,
-		Menu,
-		Respawn
+		Menu
 	}
 
 	GameState gameState;
+
+	private static string previousLoadScene;
+	private static string sceneToLoad;
 
 
 	// Use this for initialization
 	void Start () {
 
-		if (gm == null) {
-		
-			gm = new GameManager ();
-		}
-		PlayerPrefs.SetString ("State", "NotRespawn");
-		gameState = GameState.Playing;
-
-
+		previousLoadScene = PlayerPrefs.GetString ("previousLoadScene");
+		sceneToLoad = PlayerPrefs.GetString ("sceneToLoad");
 		float x = PlayerPrefs.GetFloat ("xValue");
 		float y = (float)PlayerPrefs.GetInt ("yValue");
 
-		player.transform.position = new Vector3 (x, y, 0f);
+		if (previousLoadScene == null) {
+			previousLoadScene = "Prototype1";
+			PlayerPrefs.SetString ("previousLoadScene", previousLoadScene);
+		}
+
+		if (previousLoadScene == sceneToLoad) {
+			player.transform.position = new Vector3 (x, y, 0f);
+		} else {
+			player.transform.position = new Vector3 (0f, 0f, 0f);
+		}
+
+		PlayerPrefs.SetString ("previousLoadScene", sceneToLoad);
+		gameState = GameState.Playing;
+
+
 		
 	}
 	
 	// Update is called once per frame
 	void Update () {
-
-		if(PlayerPrefs.GetString("State")=="respawn"){
-
-			gameState = GameState.Respawn;
-
-		} else {
-			gameState = GameState.Playing;
-		}
 
 		switch (gameState) {
 		case GameState.Playing:
@@ -54,16 +56,6 @@ public class GameManager : MonoBehaviour {
 
 		case GameState.Menu:
 			{
-				break;
-			}
-
-		case GameState.Respawn:
-			{	
-				float x = PlayerPrefs.GetFloat ("xValue");
-				float y = (float)PlayerPrefs.GetInt ("yValue");
-				player.transform.position = new Vector3 (x, y, 0f);
-				PlayerPrefs.SetString ("State", "NotRespawn");
-				gameState = GameState.Playing;
 				break;
 			}
 

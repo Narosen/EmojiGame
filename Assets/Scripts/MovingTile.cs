@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//this script is for the moving platform either horizontal or vertical
+
 public class MovingTile : MonoBehaviour {
 
 	public enum movementDirection
@@ -27,7 +29,7 @@ public class MovingTile : MonoBehaviour {
 	private bool touched;
 
 	float y = -1f;
-	float x = -1f;
+	float x = 4.567821f;
 
 	float xInter;
 	float yInter;
@@ -39,10 +41,13 @@ public class MovingTile : MonoBehaviour {
 
 	public LayerMask layer;
 
+	public bool moveOnWithPlayerTouch;
+
 
 	// Use this for initialization
 	void Start () {
-
+		
+		//getting the initial position of the platform to set the limits according to it
 		tile = GetComponent<Transform> ();
 
 	}
@@ -50,43 +55,60 @@ public class MovingTile : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
+		//returning colliders that are on the moving platform so that it can move along with it
 		objects = Physics2D.OverlapBoxAll (new Vector2 (transform.position.x + extraX, transform.position.y + extraY), new Vector2 (sizeX, sizeY),0.0f,layer);
 
-		if (direction == movementDirection.Vertical) {
+		if (moveOnWithPlayerTouch == false) {
 
-			yInter = Mathf.InverseLerp (-1f, 1f, Mathf.Sin (y));
-		
-			tile.position = new Vector3 (tile.position.x, (float) Mathf.Lerp (minY, maxY, yInter), tile.position.z);
 
-			//for (int i = 0; i < objects.Length; i++) {
-			//	objects[i].transform.position = new Vector3 (objects[i].transform.position.x, objects[i].transform.position.y , objects[i].transform.position.z);
-			
-			//}
+			//for movement, we use the sin movement. We convert the [-1,1] range of sin to range [0,1] using inverse lerp. 
+			//Then we use the converted range on lerp for the min and max diatance to cover.
 
-			y += speed * Time.deltaTime;
+			//for vertical movement
+			if (direction == movementDirection.Vertical) {
 
-		}
+				yInter = Mathf.InverseLerp (-1f, 1f, Mathf.Sin (y));
 
-		else if (direction == movementDirection.Horizontal) {
+				tile.position = new Vector3 (tile.position.x, (float) Mathf.Lerp (minY, maxY, yInter), tile.position.z);
 
-			xInter = Mathf.InverseLerp (-1f, 1f, Mathf.Sin (x));
-
-			float pos1 = tile.position.x;
-
-			tile.position = new Vector3 ((float) Mathf.Lerp (minX, maxX, xInter) ,tile.position.y , tile.position.z);
-
-			float pos2 = tile.position.x;
-
-			for (int i = 0; i < objects.Length; i++) {
-				objects[i].transform.position = new Vector3 (objects[i].transform.position.x + (pos2 - pos1), objects[i].transform.position.y, objects[i].transform.position.z);
+				y += speed * Time.deltaTime;
 
 			}
 
-			x += speed * Time.deltaTime;
+			//for horizontal movement
+			else if (direction == movementDirection.Horizontal) {
 
+				xInter = Mathf.InverseLerp (-1f, 1f, Mathf.Sin (x));
+
+				float pos1 = tile.position.x;
+
+				tile.position = new Vector3 ((float) Mathf.Lerp (minX, maxX, xInter) ,tile.position.y , tile.position.z);
+
+				float pos2 = tile.position.x;
+
+				//for the objects on top of the moving platform to move along, we add the distance covered by the platform
+				//from initial to final position per frame rate to objects 
+				for (int i = 0; i < objects.Length; i++) {
+					objects[i].transform.position = new Vector3 (objects[i].transform.position.x + (pos2 - pos1), objects[i].transform.position.y, objects[i].transform.position.z);
+
+				}
+
+				x += speed * Time.deltaTime;
+
+			}
+		
 		}
 
+
 		
+	}
+
+	void OnCollisionEnter2D(Collision2D coll){
+		
+		if (coll.gameObject.tag == "Player") {
+			moveOnWithPlayerTouch = false;
+		}
+
 	}
 
 	private void OnDrawGizmosSelected() {
